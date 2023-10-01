@@ -51,3 +51,49 @@ int isNumber(int i,int j) {  // Перегрузка предыдущей фун
 	cin.ignore(INT_MAX, '\n');
 	return userInput;
 }
+
+void saveArray(vector<int> array, vector<int> sortedArray) { // Функция сохранения результата работы
+
+	string filePath = "";
+	bool isDataSaved = false;
+
+	do {
+		cout << "Сохранить результат работы в:" << endl;
+		cin >> filePath;
+
+		if (ifstream(filePath)) { // Если удалось открыть файл по заданному адресу, предложить его перезаписать или повторить ввод
+			cout << "Файл уже существует." << endl;
+			cout << "0 - Перезаписать существующий файл." << endl;
+			cout << "1 - Повторить ввод." << endl;
+			int tryAnotherFile = isNumber(yes,no); // Ввод пользователя
+			if (tryAnotherFile) { // Если пользователь выбрал повторить ввод, вернуться в начало do
+				continue;
+			}
+		}
+
+		ofstream file(filePath, ofstream::app); // Открытие файла в режиме добавления
+
+		if (!file) { // Если при открытии файла возникла ошибка, файл закрывается.
+			cout << "Запись запрещена. Повторите ввод." << endl;
+			file.close();
+			continue;
+		}
+
+		file.close(); // Закрытие файла после всех проверок, чтобы открыть его вновь в режиме удаления всей информации
+		file.open(filePath, ofstream::trunc);
+
+		file << "Неотсортированный массив:" << endl;
+		for (int i = 0; i < array.size(); i++) {
+				file << array[i] << endl;
+		}
+
+		file << "Oтсортированный массив:" << endl;
+		for (int i = 0; i < array.size(); i++) {
+			file << sortedArray[i] << endl;
+		}
+		// Выше запись в файл данных программы  
+		file.close(); // Закрытие файла
+		cout << "Запись завершена." << endl;
+		isDataSaved = true; // Сигнал, что сохранение выполнено успешно
+	} while (!isDataSaved);
+}
